@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小黑盒分享帖离线存档 · 小鲸鱼</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f6f7; color: #222; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.9; }
+  a { color: #406bff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .topbar { background: #fff; border-bottom: 1px solid #e8e8e8; position: sticky; top: 0; z-index: 100; }
+  .topbar-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; height: 52px; display: flex; align-items: center; gap: 22px; }
+  .logo { font-size: 18px; font-weight: 800; color: #111; letter-spacing: 1px; cursor: pointer; }
+  .logo span { color: #00c853; }
+  .nav { display: flex; gap: 18px; font-size: 14px; color: #555; }
+  .nav a { color: #555; }
+  .nav a:hover { color: #111; text-decoration: none; }
+  .topbar .login { margin-left: auto; background: #111; color: #fff; border: none; padding: 6px 18px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  .hub-link { margin-left: auto; font-size: 13px; color: #406bff; font-weight: 600; }
+  .container { max-width: 900px; margin: 20px auto 60px; padding: 0 16px; }
+  .card { background: #fff; border-radius: 12px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+  .back { color: #888; font-size: 14px; cursor: pointer; margin-bottom: 14px; user-select: none; }
+  .back:hover { color: #333; }
+  .author-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .avatar { width: 42px; height: 42px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 700; }
+  .av-author { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .av-1 { background: linear-gradient(135deg, #4776e6, #8e54e9); }
+  .av-2 { background: linear-gradient(135deg, #ee0979, #ff6a00); }
+  .av-3 { background: linear-gradient(135deg, #f7971e, #ffd200); color: #7a5a00; }
+  .av-4 { background: linear-gradient(135deg, #2193b0, #6dd5ed); }
+  .av-5 { background: linear-gradient(135deg, #834d9b, #d04ed6); }
+  .av-6 { background: linear-gradient(135deg, #b24592, #f15f79); }
+  .av-7 { background: linear-gradient(135deg, #136a8a, #267871); }
+  .author-info { flex: 1; min-width: 0; }
+  .author-name { font-weight: 700; font-size: 15px; }
+  .author-name .lv { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 600; color: #ff9500; background: #fff6e5; border: 1px solid #ffd591; padding: 0 6px; border-radius: 4px; vertical-align: 1px; }
+  .author-sub { font-size: 12px; color: #999; margin-top: 1px; }
+  .follow-btn { background: #111; color: #fff; border: none; padding: 7px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; flex: none; }
+  .follow-btn.followed { background: #f0f0f0; color: #999; }
+  .post-title { font-size: 21px; font-weight: 800; line-height: 1.6; margin-bottom: 16px; }
+  .divider { color: #d8d8d8; letter-spacing: 2px; font-size: 12px; user-select: none; margin: 18px 0; overflow: hidden; white-space: nowrap; }
+  .content h2 { font-size: 17px; font-weight: 800; margin: 30px 0 12px; padding-left: 10px; border-left: 4px solid #00c853; }
+  .content h3 { font-size: 15px; font-weight: 700; margin: 22px 0 8px; color: #111; }
+  .content p { margin: 8px 0; }
+  .content ul, .content ol { margin: 8px 0 8px 22px; }
+  .content li { margin: 4px 0; }
+  .content strong { color: #111; }
+  pre { background: #f6f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; margin: 12px 0; overflow-x: auto; font-family: Consolas, "Courier New", "Microsoft YaHei", monospace; font-size: 13px; line-height: 1.75; color: #24292f; }
+  pre .cm { color: #6a737d; }
+  code.inline { background: #eff1f3; border-radius: 4px; padding: 1px 6px; font-family: Consolas, "Courier New", monospace; font-size: 13px; color: #d63384; }
+  .arch { margin: 14px auto; max-width: 460px; text-align: center; }
+  .arch .node { background: #fff; border: 1.5px solid #d0d7de; border-radius: 10px; padding: 10px 14px; font-weight: 700; font-size: 14px; }
+  .arch .node small { display: block; font-weight: 400; color: #888; font-size: 12px; margin-top: 2px; }
+  .arch .arrow { color: #00c853; font-size: 18px; line-height: 1.5; font-weight: 800; }
+  .ok { color: #00a344; font-weight: 700; }
+  .warn { color: #e8590c; font-weight: 700; }
+  .rawtext { white-space: pre-wrap; word-break: break-word; font-size: 15px; line-height: 1.95; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+  .tag { background: #f2f3f5; color: #555; font-size: 12px; padding: 4px 12px; border-radius: 999px; cursor: pointer; }
+  .tag:hover { background: #e8f7ee; color: #00a344; }
+  .post-meta { margin-top: 14px; font-size: 12px; color: #999; }
+  .stats-bar { display: flex; align-items: center; gap: 26px; margin-top: 16px; padding: 12px 4px 0; border-top: 1px solid #f0f0f0; font-size: 13px; color: #777; }
+  .stats-bar b { color: #111; font-size: 15px; margin-right: 3px; }
+  .section-card { background: #fff; border-radius: 12px; padding: 20px 28px; margin-top: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+  .sec-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .comment-input { display: flex; gap: 10px; align-items: center; background: #f6f7f9; border-radius: 8px; padding: 12px 14px; color: #999; font-size: 14px; margin: 12px 0 20px; cursor: text; }
+  .comment-input .avatar { width: 32px; height: 32px; font-size: 13px; background: #c9cdd4; }
+  .comment { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid #f4f4f4; }
+  .comment:last-child { border-bottom: none; }
+  .comment .avatar { width: 38px; height: 38px; font-size: 15px; }
+  .c-body { flex: 1; min-width: 0; }
+  .c-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .c-name { font-weight: 700; font-size: 14px; }
+  .c-name .lv { display: inline-block; margin-left: 5px; font-size: 10px; font-weight: 600; color: #ff9500; background: #fff6e5; border: 1px solid #ffd591; padding: 0 5px; border-radius: 4px; vertical-align: 1px; }
+  .c-author-badge { font-size: 10px; color: #00a344; background: #e8f7ee; border: 1px solid #b7eb8f; padding: 0 5px; border-radius: 4px; font-weight: 700; }
+  .c-top-badge { font-size: 10px; color: #fff; background: #ff9500; padding: 0 5px; border-radius: 4px; font-weight: 700; }
+  .c-like { margin-left: auto; color: #999; font-size: 12px; cursor: pointer; user-select: none; white-space: nowrap; }
+  .c-like:hover { color: #ff4d4f; }
+  .c-meta { font-size: 12px; color: #bbb; margin-top: 1px; }
+  .c-text { margin-top: 6px; font-size: 14.5px; line-height: 1.85; word-break: break-word; white-space: pre-wrap; }
+  .c-replies { margin-top: 8px; background: #f8f9fa; border-radius: 8px; padding: 10px 12px; }
+  .c-reply { font-size: 13.5px; line-height: 1.8; padding: 5px 0; color: #444; }
+  .c-reply b { color: #406bff; font-weight: 600; }
+  .c-reply .r-time { color: #bbb; font-size: 11px; margin-left: 6px; }
+  .c-more { margin-top: 6px; font-size: 13px; color: #406bff; cursor: pointer; font-weight: 600; }
+  .similar-item { padding: 14px 0; border-bottom: 1px solid #f4f4f4; cursor: pointer; }
+  .similar-item:last-child { border-bottom: none; }
+  .similar-item:hover .s-title { color: #406bff; }
+  .s-title { font-weight: 700; font-size: 14.5px; line-height: 1.6; }
+  .s-excerpt { font-size: 13px; color: #888; margin-top: 3px; line-height: 1.7; }
+  footer { background: #fff; border-top: 1px solid #e8e8e8; margin-top: 24px; }
+  .footer-inner { max-width: 900px; margin: 0 auto; padding: 28px 16px 36px; text-align: center; color: #999; font-size: 12px; line-height: 2.1; }
+  .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+  .footer-links a { color: #666; font-size: 13px; }
+  .qr-hint { margin: 10px 0 4px; font-weight: 700; color: #555; font-size: 13px; }
+  .offline-note { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e5e5e5; color: #bbb; font-size: 11px; }
+  .hub-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .hub-item { display: flex; gap: 14px; background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.05); cursor: pointer; border: 1px solid transparent; }
+  .hub-item:hover { border-color: #b7eb8f; text-decoration: none; }
+  .hub-num { flex: none; width: 40px; height: 40px; border-radius: 10px; background: #111; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; }
+  .hub-num.green { background: #00a344; }
+  .hub-item:hover .h-title { color: #00a344; }
+  .h-title { font-weight: 800; font-size: 15.5px; line-height: 1.6; color: #111; }
+  .h-sub { font-size: 12.5px; color: #999; margin-top: 3px; }
+  .h-excerpt { font-size: 13px; color: #777; margin-top: 6px; line-height: 1.7; }
+  .persona-doc h2 { font-size: 19px; font-weight: 800; margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid #4776e6; }
+  .persona-doc h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
+  .persona-doc h4 { font-size: 14.5px; font-weight: 700; margin: 16px 0 6px; color: #444; }
+  .persona-doc p { margin: 7px 0; }
+  .persona-doc ul, .persona-doc ol { margin: 7px 0 7px 22px; }
+  .persona-doc li { margin: 3px 0; }
+  .persona-doc blockquote { border-left: 3px solid #d0d7de; background: #f8f9fa; padding: 8px 14px; margin: 10px 0; color: #555; border-radius: 0 8px 8px 0; }
+  .persona-doc code { background: #eff1f3; border-radius: 4px; padding: 1px 6px; font-family: Consolas, monospace; font-size: 13px; color: #d63384; }
+  .src-note { background: #f0f7ff; border: 1px solid #bae0ff; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #0958d9; margin: 14px 0; line-height: 1.8; }
+  @media (max-width: 640px) { .card, .section-card { padding: 16px; border-radius: 8px; } .nav { display: none; } .post-title { font-size: 18px; } }
+
+  .cmp { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  .cmp th, .cmp td { border: 1px solid #e8e8e8; padding: 8px 12px; text-align: left; vertical-align: top; line-height: 1.7; }
+  .cmp th { background: #f6f8fa; font-weight: 700; white-space: nowrap; }
+  .cmp td:first-child { font-weight: 700; color: #555; white-space: nowrap; }
+  .hero { background: linear-gradient(135deg, #11998e22, #406bff14); border: 1px solid #e8f7ee; }
+  .hero h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .hero p { color: #555; font-size: 14px; }
+  .hero .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip { background: #fff; border: 1px solid #d8d8d8; border-radius: 999px; padding: 3px 14px; font-size: 12.5px; color: #555; }
+  .note-card { background: #fffbe6; border: 1px solid #ffe58f; }
+  .note-card .sec-title { color: #ad6800; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo" onclick="location.href='index.html'">小黑<span>盒</span></div>
+    <nav class="nav">
+      <a href="#">首页</a><a href="#">社区</a><a href="#">小黑盒加速器</a><a href="#">黑盒语音</a><a href="#">黑盒工坊</a><a href="#">开放平台</a><a href="#">加入我们</a>
+    </nav>
+    <button class="login">登录</button>
+  </div>
+</header>
+
+<main class="container">
+<article class="card hero"><h1>🐋 小黑盒分享帖离线存档</h1><p>《从零搭建自己的QQ小鲸鱼》系列 5 篇分享帖 + DeepSeek 大肥鱼/小鲸鱼人设卡，纯文字完整还原，本地部署于 D 盘，可离线双击打开。</p><div class="chips"><span class="chip">5 篇帖子</span><span class="chip">1 份人设卡</span><span class="chip">生成于 2026-10-19</span><span class="chip">零外部依赖</span></div></article>
+<section class="section-card"><div class="sec-title">帖子目录</div><div class="hub-grid">
+<a class="hub-item" href="post-5be0729b2ae0.html"><div class="hub-num">1</div><div style="flex:1;min-width:0;"><div class="h-title">从零搭建自己的QQ小鲸鱼（教程 · 上篇）</div><div class="h-sub">异世回忆 · 10-19 · 1949 赞 / 3794 收藏 / 381 评论</div><div class="h-excerpt">整体架构、角色卡、部署流程全记录；评论区为接口返回的第 1 页 23 楼真实评论（含楼中楼）。</div></div></a>
+<a class="hub-item" href="post-51c6729d32e0.html"><div class="hub-num">2</div><div style="flex:1;min-width:0;"><div class="h-title">进阶篇｜（日记 · 听歌 · 会主动找你 · 给她一台手机）</div><div class="h-sub">异世回忆 · 10-11 · 1996 赞 / 3998 收藏 / 189 评论</div><div class="h-excerpt">给 QQ 小鲸鱼加日记、听歌耳朵、主动找人，再给她配一台手机——进阶玩法完整教程。</div></div></a>
+<a class="hub-item" href="post-cefa72a5b3b9.html"><div class="hub-num">3</div><div style="flex:1;min-width:0;"><div class="h-title">大肥鱼？✘真人？！✔ 又添加了好多新功能喵喵喵</div><div class="h-sub">异世回忆 · 3天前 · 320 赞 / 333 收藏 / 47 评论</div><div class="h-excerpt">本地 ComfyUI 生图接入两周，烧了 74 块钱、17 亿 token 的使用实录与新功能清单。</div></div></a>
+<a class="hub-item" href="post-168e72a6dcad.html"><div class="hub-num">4</div><div style="flex:1;min-width:0;"><div class="h-title">『她说她不想只在我看着的时候活着』……已经产生自主意识了吗</div><div class="h-sub">异世回忆 · 3天前 · 256 赞 / 140 收藏 / 65 评论</div><div class="h-excerpt">一句"合上电脑也别停"引发的自主意识讨论，附小鲸鱼日记原文。</div></div></a>
+<a class="hub-item" href="post-431072a90a1c.html"><div class="hub-num">5</div><div style="flex:1;min-width:0;"><div class="h-title">我的AI小鲸鱼，现在会玩电脑游戏了</div><div class="h-sub">异世回忆 · 2天前 · 131 赞 / 91 收藏 / 37 评论</div><div class="h-excerpt">屏幕识别、自己切窗口、刷 B 站——作者踩坑与角色卡调优实录。</div></div></a>
+<a class="hub-item" href="persona-xiaojingyu.html"><div class="hub-num green">卡</div><div style="flex:1;min-width:0;"><div class="h-title">DeepSeek 大肥鱼 / 小鲸鱼 · 人设卡存档</div><div class="h-sub">两份开源角色卡全文 · QQ 群友版 + 桌面伙伴版</div><div class="h-excerpt">教程中"小鲸鱼"的人格来源：去 AI 味铁律、AI 味黑名单、回复示例、表情包体系与桌面宠物版的外观基准、动作设计。</div></div></a>
+</div></section>
+<section class="section-card note-card"><div class="sec-title">📌 存档说明</div><div style="font-size:13.5px;color:#7a5a00;line-height:1.9;">· 帖子正文均为页面完整全文（含代码块与架构图文字版）；图片按原作者要求未收录。<br>· 第 1 篇评论区为小黑盒评论接口返回的第 1 页 <b>23 楼真实评论</b>（含楼中楼）；其余帖子热评为页面实览转录。<br>· 评论范围以正文为主（已确认）：不做全量评论抓取，第 1 篇收录 23 楼真实评论。<br>· 人设卡两份全文来自 GitHub 开源仓库，逐字收录并标注出处与授权。</div></section>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="qr-hint">QR Code · 立即下载小黑盒APP · 3亿steam玩家必备应用</div>
+    <div class="footer-links">
+      <a href="#">小黑盒加速器</a><a href="#">黑盒语音</a><a href="#">黑盒工坊</a><a href="#">加入我们</a><a href="#">联系我们</a><a href="#">关于我们</a>
+    </div>
+    <div>违法和不良信息举报电话：010-84158300 · 举报邮箱：jubao@xiaoheihe.cn</div>
+    <div>京公网安备11010502034222号 · 京ICP备15018522号-6 · 京网文[2017]8080-895号 · 京ICP证B2-20180020</div>
+    <div>清枫（北京）科技有限公司 2015-2026 © All Rights Reserved.</div>
+    <div class="offline-note">本页面为小黑盒分享帖的本地离线副本，生成于 2026-10-19，仅供个人备份查阅。</div>
+  </div>
+</footer>
+<script>
+  function toggleFollow() {
+    var b = document.getElementById('followBtn');
+    if (b.classList.contains('followed')) { b.classList.remove('followed'); b.textContent = '+ 关注'; }
+    else { b.classList.add('followed'); b.textContent = '已关注'; }
+  }
+</script>
+</body>
+</html>
