@@ -5,6 +5,8 @@
 
 | 项目 | 说明 |
 |------|------|
+| 🌐 在线地址 | https://xunshenwu-eng.github.io/xhh-xiaojingyu/ （GitHub Pages） |
+| 仓库 | https://github.com/xunshenwu-eng/xhh-xiaojingyu |
 | 来源 | 小黑盒分享页 link_id：`5be0729b2ae0`、`51c6729d32e0`、`cefa72a5b3b9`、`168e72a6dcad`、`431072a90a1c` |
 | 作者 | 异世回忆（Lv.6 · 新疆） |
 | 内容 | 5 篇帖子全文 + 评论 + 相似内容 + 人设卡两份全文 |
